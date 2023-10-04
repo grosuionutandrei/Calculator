@@ -5,21 +5,22 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 
 public class CalculatorController {
 
     @FXML
     private TextField screen;
-    private String operation = "";
+
     private boolean isOperandPressed = false;
     private boolean illegleOperation = false;
     private boolean getAnotherValue = false;
     private boolean reversingNumber = false;
     private String reversedInput = "";
     private Stack<String> inputs = new Stack<String>();
+    private Calculator opc= new Calculator();
+
 
 
     private char[] operations = {'+', '-', '/', '*', '%'};
@@ -27,8 +28,6 @@ public class CalculatorController {
     @FXML
     public void cancelOperations(ActionEvent event) {
         screen.setText("");
-        operation = "";
-
         isOperandPressed = false;
 
     }
@@ -63,20 +62,17 @@ public class CalculatorController {
 
         if (illegleOperation) {
             screen.setText("");
-            operation = "";
-            //inputs.clear();
+            inputs.clear();
             illegleOperation = false;
         } else if (isOperandPressed) {
             inputs.push(screen.getText());
             screen.setText(pressedButton.getText());
             inputs.push(pressedButton.getText());
-            operation += pressedButton.getText();
 
             isOperandPressed = false;
             getAnotherValue = true;
 
         } else if(reversingNumber){
-               System.out.println(operation);
                if(inputs.size()>0){
                    System.out.println(inputs.pop()+"popped");
                    inputs.push(screen.getText());
@@ -87,7 +83,6 @@ public class CalculatorController {
             if (getAnotherValue) {
                 screen.setText("");
             }
-            operation += pressedButton.getText();
             //inputs.add(pressedButton.getText());
             String previous = screen.getText();
             screen.setText(previous += pressedButton.getText());
@@ -132,16 +127,25 @@ public class CalculatorController {
     }
 
     public void executeCalculus(ActionEvent event) {
-        System.out.println(operation);
         inputs.push(screen.getText());
-        for(String l :inputs){
-            System.out.println(l);
-        }
+
         screen.setText("");
+
+        screen.setText(String.valueOf(opc.calculateExpression( reverseOrder(inputs))));
+
         inputs.clear();
 
 
 
+    }
+
+    private Stack<String> reverseOrder (Stack<String> operation){
+        Stack<String>temporary = (Stack<String>) operation.clone();
+        Stack<String> reversed = new Stack<String>();
+        while(temporary.size()>0){
+            reversed.push(temporary.pop());
+        }
+       return reversed;
     }
 
 
